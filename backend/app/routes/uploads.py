@@ -1,6 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.utils.pdf_reader import extract_text_from_pdf
 from app.utils.text_splitter import split_text
+from app.services.embedding import create_embeddings
+from app.services.vector_store import store_embeddings
 import shutil
 import uuid
 
@@ -22,11 +24,8 @@ def upload_pdf(file: UploadFile = File(...)):
             detail="Only PDF files are allowed"
         )
 
-    #Get the file extension .pdf
-    file_extension = file.filename.split(".")[-1]
-
     #Generate unique filename
-    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    unique_filename = f"{uuid.uuid4()}_{file.filename}"
 
     file_path = f"uploads/{unique_filename}"
 
@@ -37,9 +36,16 @@ def upload_pdf(file: UploadFile = File(...)):
     chunks = split_text(text)
     print(f"Total chunks : {len(chunks)}")
 
-    for index, chunk in enumerate(chunks[:3], start=1):
-        print(f"\n------Chunk {index} ------")
-        print(chunk)
+    embeddings = create_embeddings(chunks)
+    print(embeddings.shape)
+
+    document_id = unique_filename.split("_")[0]
+    store_embeddings(chunks, embeddings, document_id)
+
+
+    # for index, chunk in enumerate(chunks[:3], start=1):
+    #     print(f"\n------Chunk {index} ------")
+    #     print(chunk)
     
     return {
         "message": "File uploaded successfully!",
