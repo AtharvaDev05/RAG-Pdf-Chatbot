@@ -7,3 +7,7 @@ def create_embeddings(chunks: List[str]) -> List[List[str]]: #type hint
     embeddings = model.encode(chunks)
 
     return embeddings
+
+def create_query_embedding(question : str):
+    embedding = model.encode(question)
+    return embedding

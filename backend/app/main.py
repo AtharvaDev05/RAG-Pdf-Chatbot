@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.routes.uploads import router as upload_router
+from app.routes.query import router as query_router
 
 app = FastAPI(
     title="RAG PDF Chatbot",
@@ -15,3 +16,4 @@ def root():
     }
 
 app.include_router(upload_router, prefix="/upload", tags=["Upload"])
+app.include_router(query_router, prefix="/query", tags=["Query"])
