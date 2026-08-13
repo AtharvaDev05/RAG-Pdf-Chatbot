@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.uploads import router as upload_router
 from app.routes.query import router as query_router
+from app.routes.auth import router as auth_router
 
 app = FastAPI(
     title="RAG PDF Chatbot",
@@ -25,3 +26,4 @@ def root():
 
 app.include_router(upload_router, prefix="/upload", tags=["Upload"])
 app.include_router(query_router, prefix="/query", tags=["Query"])
+app.include_router(auth_router)

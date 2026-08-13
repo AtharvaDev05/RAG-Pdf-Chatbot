@@ -1,10 +1,19 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+
 from app.utils.pdf_reader import extract_text_from_pdf
 from app.utils.text_splitter import split_text
 from app.services.embedding import create_embeddings
 from app.services.vector_store import store_embeddings
+
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.core.security import get_current_user
+from app.models.db_models import User, Document
+
 import shutil
 import uuid
+
 
 router = APIRouter()
 
@@ -15,7 +24,12 @@ def upload_page():
     }
 
 @router.post("/")
-def upload_pdf(file: UploadFile = File(...)):
+def upload_pdf (
+    file: UploadFile = File(...),
+    current_user : User = Depends(get_current_user),
+    db : Session = Depends(get_db) 
+):
+    
 
     #Validate that uploaded file is pdf
     if file.content_type != "application/pdf":
@@ -24,8 +38,21 @@ def upload_pdf(file: UploadFile = File(...)):
             detail="Only PDF files are allowed"
         )
 
+    # Generate unique document ID
+    document_id = str(uuid.uuid4())
+
+    document = Document(
+        filename = file.filename,
+        document_id = document_id,
+        user_id = current_user.id
+    )
+
+    db.add(document)
+    db.commit()
+    db.refresh(document)
+
     #Generate unique filename
-    unique_filename = f"{uuid.uuid4()}_{file.filename}"
+    unique_filename = f"{document_id}_{file.filename}"
 
     file_path = f"uploads/{unique_filename}"
 
@@ -39,16 +66,11 @@ def upload_pdf(file: UploadFile = File(...)):
     embeddings = create_embeddings(chunks)
     print(embeddings.shape)
 
-    document_id = unique_filename.split("_")[0]
-    store_embeddings(chunks, embeddings, document_id)
-
-
-    # for index, chunk in enumerate(chunks[:3], start=1):
-    #     print(f"\n------Chunk {index} ------")
-    #     print(chunk)
+    store_embeddings(chunks, embeddings, document_id, file.filename, current_user.id)
     
     return {
         "message": "File uploaded successfully!",
         "original_filename": file.filename,
-        "stored_filename": unique_filename
+        "stored_filename": unique_filename,
+        "document_id": document_id
     }
