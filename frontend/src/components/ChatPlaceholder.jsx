@@ -2,7 +2,7 @@ function ChatPlaceholder() {
   return (
     <div className="flex h-full items-center justify-center px-6">
       <div className="w-full max-w-md text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg sm:h-16 sm:w-16">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 shadow-lg sm:h-16 sm:w-16">
           <span className="text-xl text-white sm:text-2xl">✦</span>
         </div>
 

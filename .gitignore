@@ -40,9 +40,6 @@ htmlcov/
 # Database
 *.db
 
-# FAISS Index (optional, we'll decide later)
-*.faiss
-
 # Python virtual environment
 .python-version
 

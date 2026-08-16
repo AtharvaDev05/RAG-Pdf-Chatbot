@@ -56,14 +56,14 @@ function ChatInput({ onSend, loading, uploadedFile }) {
                   {loading ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-white"></span>
                   ) : (
-                    <span className="text-lg leading-none">↑</span>
+                    <span className="text-lg leading-none">➤</span>
                   )}
                 </button>
               </div>
             </div>
 
             <p className="mt-2 text-center text-xs text-gray-400">
-              Enter to send • Shift + Enter for a new line
+              AI-generated answers · Always verify important information
             </p>
           </>
         )}

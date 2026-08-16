@@ -1,13 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from app.routes.uploads import router as upload_router
 from app.routes.query import router as query_router
 from app.routes.auth import router as auth_router
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(
     title="RAG PDF Chatbot",
     version="1.0.0",
     description="A chatbot that answers questions from uploaded PDFs."
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key = os.getenv("SESSION_SECRET")
 )
 
 app.add_middleware(

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ChatMessage from "./ChatMessage";
 import ChatPlaceholder from "./ChatPlaceholder";
 
-function ChatWindow({ messages, loading, uploadedFile }) {
+function ChatWindow({ messages, loading }) {
   const chatContainerRef = useRef(null);
   const bottomRef = useRef(null);
 

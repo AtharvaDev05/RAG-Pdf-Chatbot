@@ -3,12 +3,43 @@ import ChatWindow from "./ChatWindow";
 import ChatInput from "./ChatInput";
 import Sidebar from "./Sidebar";
 import ChatHeader from "./ChatHeader";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function MainLayout() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const token = localStorage.getItem("access_token");
+
+      if (!token) return;
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/auth/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          localStorage.removeItem("access_token");
+          return;
+        }
+
+        const data = await response.json();
+
+        setCurrentUser(data);
+      } catch (error) {
+        console.error("Failed to fetch current user:", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
 
   const handleSend = async (question) => {
     setMessages((prevMessages) => [
@@ -22,10 +53,13 @@ function MainLayout() {
     setLoading(true);
 
     try {
+      const token = localStorage.getItem("access_token")
+      
       const response = await fetch("http://127.0.0.1:8000/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           question: question,
@@ -79,7 +113,7 @@ function MainLayout() {
 
   return (
     <main className="flex h-screen overflow-hidden bg-gray-100">
-      <Sidebar />
+      <Sidebar currentUser = {currentUser}/>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <ChatHeader uploadedFile={uploadedFile} />

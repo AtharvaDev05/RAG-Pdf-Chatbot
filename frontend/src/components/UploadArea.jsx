@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function UploadArea({onUploadSuccess}) {
+function UploadArea({ onUploadSuccess }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
@@ -33,9 +33,14 @@ function UploadArea({onUploadSuccess}) {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
+    const token = localStorage.getItem("access_token")
+
     try {
       const response = await fetch("http://127.0.0.1:8000/upload", {
         method: "POST",
+        headers : {
+          Authorization : `Bearer ${token}`,
+        },
         body: formData,
       });
 
