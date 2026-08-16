@@ -164,6 +164,18 @@ Generated files such as `venv`, `node_modules`, `chroma_db`, `uploads`, and Pyth
 
 ---
 
+## 📸 Screenshots
+
+### Login
+
+![DocuMind Login](docs/screenshots/login.png)
+
+### Document Chat
+
+![DocuMind Document Chat](docs/screenshots/landing.png)
+
+---
+
 ## ⚙️ Installation
 
 ### 1. Clone the repository
